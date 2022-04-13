@@ -10,13 +10,11 @@ import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
 import com.natife.example.mysocketchatapp.data.socket.helpers.UdpSocket
 import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
 import com.natife.example.mysocketchatapp.databinding.FragmentChatBinding
-import org.koin.android.ext.android.bind
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChatFragment : Fragment() {
 
     private lateinit var binding: FragmentChatBinding
-
     private val chatViewModel by viewModel<ChatViewModel>()
     private val tcpSocket by lazy { TcpSocket(requireContext(), UdpSocket()) }
     private val chatMessageAdapter by lazy { ChatMessagesAdapter(tcpSocket) }

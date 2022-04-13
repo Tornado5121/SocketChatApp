@@ -83,14 +83,6 @@ class AuthRepository(
                     }
 
                     else -> {
-//                        myScope.launch {
-//                            Looper.prepare()
-//                            Toast.makeText(
-//                                context,
-//                                "Sorry, something went wrong. Try again",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
                     }
                 }
             }

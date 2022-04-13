@@ -15,10 +15,8 @@ class UserListViewModel(
     private val mLiveData = MutableLiveData<List<User>>()
     val liveData = mLiveData
 
-    private val myScope = CoroutineScope(Job() + Dispatchers.IO)
-
     fun sendGetUserCommand() {
-        myScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 userRepository.sendGetUserListCommand()
                 delay(3000)
@@ -27,9 +25,9 @@ class UserListViewModel(
     }
 
     fun getUserList() {
-        myScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userRepository.tcpSocket.userListFlow.collectLatest {
-                mLiveData.postValue(it + User("fds", "dfdsf"))
+                mLiveData.postValue(it)
             }
         }
     }

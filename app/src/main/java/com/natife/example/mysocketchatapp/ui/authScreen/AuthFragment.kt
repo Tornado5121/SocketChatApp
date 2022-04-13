@@ -12,6 +12,7 @@ import com.natife.example.mysocketchatapp.ui.userListScreen.UserListFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AuthFragment : Fragment() {
+
     private lateinit var binding: FragmentAuthBinding
     private val authViewModel by viewModel<AuthViewModel>()
 
@@ -43,8 +44,3 @@ class AuthFragment : Fragment() {
     }
 
 }
-
-
-//todo proper display my/not my message
-//todo proper pass user id, whom you send message
-//todo make displaying my/not my message via lambda

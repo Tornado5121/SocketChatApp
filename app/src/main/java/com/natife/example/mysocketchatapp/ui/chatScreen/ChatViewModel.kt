@@ -8,9 +8,7 @@ import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.User
 import com.natife.example.mysocketchatapp.data.socket.models.toMessageDto
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,24 +25,20 @@ class ChatViewModel(
 
     private var messages = listOf<MessageDto>()
 
-    private val myScope = CoroutineScope(Job() + Dispatchers.IO)
-    private val mySecondScope = CoroutineScope(Job() + Dispatchers.IO)
-    private val myThirdScope = CoroutineScope(Job() + Dispatchers.IO)
-
     fun onSendMessage(myMessage: SendMessageDto) {
         val message = myMessage.toMessageDto()
         messages = messages + message
-        myScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             mMessagesLiveData.postValue(messages)
         }
 
-        mySecondScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             chatRepository.sendMessage(myMessage.receiver, myMessage.message)
         }
     }
 
     fun onGetNewMessage() {
-        myThirdScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             chatRepository.tcpSocket.messageFlow.collectLatest {
                 messages = messages + it
                 mMessagesLiveData.postValue(messages)
@@ -53,7 +47,7 @@ class ChatViewModel(
     }
 
     fun getUser(id: String) {
-        myScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             chatRepository.tcpSocket.userFlow.collect {
                 mUserLiveData.postValue(it)
             }

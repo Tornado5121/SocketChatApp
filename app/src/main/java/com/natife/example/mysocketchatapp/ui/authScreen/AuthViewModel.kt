@@ -26,7 +26,7 @@ class AuthViewModel(
     }
 
     fun isAuthorised() {
-        myScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             authRepository.tcpSocket.isAuthFinished.collectLatest {
                 mLiveData.postValue(it)
             }

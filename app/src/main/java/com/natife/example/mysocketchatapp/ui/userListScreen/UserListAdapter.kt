@@ -10,8 +10,10 @@ import com.natife.example.mysocketchatapp.databinding.UserItemBinding
 
 class UserListAdapter(
     private val onCLick: (User) -> Unit
-) :
-    ListAdapter<User, UserListAdapter.UserViewHolder>(ItemDiffUtilCallback()) {
+) : ListAdapter<
+        User,
+        UserListAdapter.UserViewHolder>
+    (ItemDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         return UserViewHolder.from(parent)
@@ -34,17 +36,20 @@ class UserListAdapter(
         }
 
         companion object {
+
             fun from(parent: ViewGroup): UserViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = UserItemBinding
                     .inflate(layoutInflater, parent, false)
                 return UserViewHolder(binding)
             }
+
         }
 
     }
 
     class ItemDiffUtilCallback : DiffUtil.ItemCallback<User>() {
+
         override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem.id == newItem.id
         }
