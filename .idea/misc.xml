@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/chat_user_item.xml" value="0.1598731884057971" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/fragment_auth.xml" value="0.18854166666666666" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/fragment_chat.xml" value="0.1" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/fragment_chat_list.xml" value="0.1484375" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/fragment_user_list.xml" value="0.11820652173913043" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/my_chat_message_item.xml" value="0.25" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/notmy_chat_message_item.xml" value="0.20416666666666666" />
+        <entry key="..\:/AndroidDeveloping/SocketChatApp/SocketChatApp/app/src/main/res/layout/user_item.xml" value="0.1598731884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4628623188405797" />
         <entry key="app/src/main/res/layout/auth_layout.xml" value="0.45652173913043476" />
         <entry key="app/src/main/res/layout/chat_message_item.xml" value="0.4628623188405797" />

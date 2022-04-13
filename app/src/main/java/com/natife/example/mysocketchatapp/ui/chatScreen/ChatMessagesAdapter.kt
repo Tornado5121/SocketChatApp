@@ -5,51 +5,99 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.natife.example.mysocketchatapp.data.ChatMessage
-import com.natife.example.mysocketchatapp.databinding.ChatMessageItemBinding
+import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
+import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
+import com.natife.example.mysocketchatapp.databinding.MyChatMessageItemBinding
+import com.natife.example.mysocketchatapp.databinding.NotmyChatMessageItemBinding
 
-class ChatMessagesAdapter :
-    ListAdapter<
-            ChatMessage,
-            ChatMessagesAdapter.ChatMessageViewHolder>
-        (ChatMessageDiffUtil()) {
+private const val VIEW_TYPE_ONE = 1
+private const val VIEW_TYPE_TWO = 2
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatMessageViewHolder {
-        return ChatMessageViewHolder.from(parent)
+class ChatMessagesAdapter(
+    private val tcpSocket: TcpSocket
+) : ListAdapter<
+        MessageDto,
+        RecyclerView.ViewHolder>
+    (ChatMessageDiffUtil()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ONE) {
+            MyChatMessageViewHolder.from(parent)
+        } else {
+            NotMyChatMessageViewHolder.from(parent)
+        }
     }
 
-    override fun onBindViewHolder(holder: ChatMessageViewHolder, position: Int) {
-        holder.bind(currentList[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (currentList[position].from.id == tcpSocket.id) {
+            (holder as MyChatMessageViewHolder).bind(currentList[position])
+        } else (holder as NotMyChatMessageViewHolder).bind(currentList[position])
     }
 
-    class ChatMessageViewHolder(private val binding: ChatMessageItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    override fun getItemViewType(position: Int): Int {
+        return if (currentList[position].from.id == tcpSocket.id) {
+            VIEW_TYPE_ONE
+        } else {
+            VIEW_TYPE_TWO
+        }
+    }
 
-        fun bind(data: ChatMessage) {
+    class MyChatMessageViewHolder(
+        private val binding: MyChatMessageItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(data: MessageDto) {
             with(binding) {
-                userName.text = data.name
-                userTextMessage.text = data.text_message
+                userName.text = data.from.name
+                userTextMessage.text = data.message
             }
         }
 
         companion object {
-            fun from(parent: ViewGroup): ChatMessageViewHolder {
+
+            fun from(parent: ViewGroup): MyChatMessageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ChatMessageItemBinding
+                val binding = MyChatMessageItemBinding
                     .inflate(layoutInflater, parent, false)
-                return ChatMessageViewHolder.from(binding.root)
+                return MyChatMessageViewHolder(binding)
             }
+
         }
 
     }
 
-    class ChatMessageDiffUtil : DiffUtil.ItemCallback<ChatMessage>() {
-        override fun areItemsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
+    class NotMyChatMessageViewHolder(
+        private val binding: NotmyChatMessageItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(data: MessageDto) {
+            with(binding) {
+                userName.text = data.from.name
+                userTextMessage.text = data.message
+            }
+        }
+
+        companion object {
+
+            fun from(parent: ViewGroup): NotMyChatMessageViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = NotmyChatMessageItemBinding
+                    .inflate(layoutInflater, parent, false)
+                return NotMyChatMessageViewHolder(binding)
+            }
+
+        }
+
+    }
+
+    class ChatMessageDiffUtil : DiffUtil.ItemCallback<MessageDto>() {
+
+        override fun areItemsTheSame(oldItem: MessageDto, newItem: MessageDto): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
-            return oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: MessageDto, newItem: MessageDto): Boolean {
+            return oldItem.message == newItem.message
         }
 
     }

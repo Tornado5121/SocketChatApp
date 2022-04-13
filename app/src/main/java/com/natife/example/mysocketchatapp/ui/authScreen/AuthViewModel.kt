@@ -1,22 +1,35 @@
 package com.natife.example.mysocketchatapp.ui.authScreen
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.natife.example.mysocketchatapp.data.AuthRepository
+import androidx.lifecycle.viewModelScope
+import com.natife.example.mysocketchatapp.data.repositories.AuthRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    fun getAuthorised(userName: String) {
+    private val mLiveData = MutableLiveData<Boolean>()
+    val liveData = mLiveData
 
-        authRepository.getAuthToken(userName)
-    }
+    private val myScope = CoroutineScope(Job() + Dispatchers.IO)
 
-    fun launchCheckSocketConnection() {
-
-        while (true) {
-            authRepository.sendPingCommand()
+    fun launchReadSocketCommand(name: String) {
+        myScope.launch {
+            authRepository.readSocketCommand(name)
         }
     }
 
+    fun isAuthorised() {
+        myScope.launch {
+            authRepository.tcpSocket.isAuthFinished.collectLatest {
+                mLiveData.postValue(it)
+            }
+        }
+    }
 }
