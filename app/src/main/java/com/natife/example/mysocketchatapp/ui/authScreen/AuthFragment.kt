@@ -31,7 +31,7 @@ class AuthFragment : Fragment() {
         binding.button.setOnClickListener {
             binding.progressBar.isVisible = true
             authViewModel.launchReadSocketCommand(binding.editTextTextPersonName.text.toString())
-            authViewModel.liveData.observe(viewLifecycleOwner) {
+            authViewModel.authLiveData.observe(viewLifecycleOwner) {
                 if (it) {
                     requireActivity().supportFragmentManager
                         .beginTransaction()

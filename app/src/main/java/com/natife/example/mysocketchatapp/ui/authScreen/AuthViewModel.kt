@@ -14,8 +14,8 @@ class AuthViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val mLiveData = MutableLiveData<Boolean>()
-    val liveData = mLiveData
+    private val mAuthLiveData = MutableLiveData<Boolean>()
+    val authLiveData = mAuthLiveData
 
     private val myScope = CoroutineScope(Job() + Dispatchers.IO)
 
@@ -28,8 +28,11 @@ class AuthViewModel(
     fun isAuthorised() {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.tcpSocket.isAuthFinished.collectLatest {
-                mLiveData.postValue(it)
+                mAuthLiveData.postValue(it)
             }
         }
     }
+
+
+
 }
