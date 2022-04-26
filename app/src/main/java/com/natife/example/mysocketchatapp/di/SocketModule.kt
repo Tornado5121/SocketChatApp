@@ -13,12 +13,19 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val dataModule = module {
-    single { AuthRepository(androidContext(), get()) }
+    single { AuthRepository(androidContext(), get(), get()) }
     single { ChatRepository(get()) }
     single { UserRepository(get()) }
-    single { TcpSocket(androidContext(), get()) }
     single { UdpSocket() }
+    single { TcpSocket() }
+
 }
+
+//val dataModule = module {
+//    factory<UserFetcher> { UserFetcherImpl(RetrofitClient.api) }
+//    factory<UserDataRepository> (UserDBRepQualifier){ DataBaseRepository(UserDataBase.getInstance(androidContext()).userDao) }
+//    single<UserDataRepository> { UserRepository(get(UserDBRepQualifier), get()) }
+//}
 
 val viewModelModule = module {
     viewModel { AuthViewModel(get()) }

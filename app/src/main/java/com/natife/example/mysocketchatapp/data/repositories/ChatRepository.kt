@@ -22,8 +22,7 @@ class ChatRepository(
             )
         )
         val baseUserListDto = gson.toJson(BaseDto(BaseDto.Action.SEND_MESSAGE, sendMessageDto))
-        tcpSocket.writer.println(baseUserListDto)
-        tcpSocket.writer.flush()
+        tcpSocket.send(baseUserListDto)
     }
 
     suspend fun getUserById(id: String) {

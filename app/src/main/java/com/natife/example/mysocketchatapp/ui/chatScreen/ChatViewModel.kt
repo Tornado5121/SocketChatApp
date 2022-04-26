@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
-    private val chatRepository: ChatRepository,
+    val chatRepository: ChatRepository,
 ) : ViewModel() {
 
     private val mMessagesLiveData = MutableLiveData<List<MessageDto>>()

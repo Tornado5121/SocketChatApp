@@ -42,13 +42,12 @@ class UserListFragment : Fragment() {
             recyclerView.adapter = userListAdapter
             recyclerView.layoutManager = LinearLayoutManager(activity)
         }
-
-        userListViewModel.sendGetUserCommand()
         userListViewModel.liveData.observe(viewLifecycleOwner) {
             userListAdapter.submitList(it)
         }
         userListViewModel.getUserList()
         binding.progressBar2.isVisible = false
+        userListViewModel.sendGetUserCommand()
     }
 
 }

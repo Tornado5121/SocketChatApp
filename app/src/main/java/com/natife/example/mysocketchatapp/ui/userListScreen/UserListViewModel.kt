@@ -16,17 +16,13 @@ class UserListViewModel(
     val liveData = mLiveData
 
     fun sendGetUserCommand() {
-        viewModelScope.launch(Dispatchers.IO) {
-            while (true) {
-                userRepository.sendGetUserListCommand()
-                delay(3000)
-            }
-        }
+        userRepository.sendGetUserListCommand()
     }
 
     fun getUserList() {
         viewModelScope.launch(Dispatchers.IO) {
-            userRepository.tcpSocket.userListFlow.collectLatest {
+            userRepository.tcpSocket
+                .userListFlow.collectLatest {
                 mLiveData.postValue(it)
             }
         }

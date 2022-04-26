@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
-import com.natife.example.mysocketchatapp.data.socket.helpers.UdpSocket
 import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
 import com.natife.example.mysocketchatapp.databinding.FragmentChatBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -16,8 +15,9 @@ class ChatFragment : Fragment() {
 
     private lateinit var binding: FragmentChatBinding
     private val chatViewModel by viewModel<ChatViewModel>()
-    private val tcpSocket by lazy { TcpSocket(requireContext(), UdpSocket()) }
-    private val chatMessageAdapter by lazy { ChatMessagesAdapter(tcpSocket) }
+
+    //    private val tcpSocket by lazy { TcpSocket() }
+    private val chatMessageAdapter by lazy { ChatMessagesAdapter(chatViewModel.chatRepository.tcpSocket) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,8 +35,8 @@ class ChatFragment : Fragment() {
             val layoutManager = LinearLayoutManager(requireContext())
             layoutManager.stackFromEnd = true
             recyclerView.layoutManager = layoutManager
-
         }
+
         chatViewModel.onGetNewMessage()
 
         chatViewModel.liveData.observe(viewLifecycleOwner) { userList ->
@@ -44,20 +44,21 @@ class ChatFragment : Fragment() {
 
             chatViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
                 binding.button.setOnClickListener {
-                    binding.recyclerView.scrollToPosition(userList.size - 1)
                     val message = binding.editText.text.toString()
                     if (message.isNotEmpty()) {
                         chatViewModel.onSendMessage(
                             SendMessageDto(
-                                tcpSocket.id,
+                                chatViewModel.chatRepository.tcpSocket.id,
                                 user.id,
                                 message
                             )
                         )
                     }
                     binding.editText.setText("")
+                    binding.recyclerView.scrollToPosition(userList.size)
                 }
             }
+
         }
         arguments?.let { chatViewModel.getUser(it.getString(KEY_ID).toString()) }
     }
