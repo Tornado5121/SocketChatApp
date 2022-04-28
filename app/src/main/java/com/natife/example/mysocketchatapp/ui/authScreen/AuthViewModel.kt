@@ -4,72 +4,50 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.natife.example.mysocketchatapp.data.repositories.AuthRepository
+import com.natife.example.mysocketchatapp.data.repositories.authRepo.AuthRepository
+import com.natife.example.mysocketchatapp.data.repositories.userProfileRepo.UserProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
 
-    private val mIsUserAuth = MutableLiveData<Boolean>()
-    val isUserAuth = mIsUserAuth
+    private val mIsTransitToUserList = MutableLiveData<Boolean>()
+    val isTransitToUserList = mIsTransitToUserList
 
-    private val mIsSocketExist = MutableLiveData<Boolean>()
-    val isSocketExist: LiveData<Boolean> = mIsSocketExist
+    private val mIsConnectionExists = MutableLiveData<Boolean>()
+    val isConnectionExists: LiveData<Boolean> = mIsConnectionExists
 
-    private val mIsIpExists = MutableLiveData<Boolean>()
-    val isIpExists = mIsIpExists
-
-    private val mIsAuthLoggingOn = MutableLiveData<Boolean>()
-    val isAuthLoggingOn = mIsAuthLoggingOn
-
-    fun turnOnAutoLog() {
-        mIsAuthLoggingOn.postValue(true)
+    fun getName(): String {
+        return userProfileRepository.getName()
     }
 
-    fun turnOffAutoLog() {
-        mIsAuthLoggingOn.postValue(false)
-    }
-
-    fun launchReadSocketCommand(name: String) {
-        authRepository.myReadScope.launch {
-            authRepository.tcpSocket.mIsSocketExist.emit(true)
-            authRepository.ipFlow.collectLatest {
-                authRepository.readSocketCommand(name, it)
-            }
-            mIsAuthLoggingOn.postValue(false)
-        }
+    fun loginUser(name: String) {
+        userProfileRepository.saveName(name)
+        authRepository.readSocketCommand(name, authRepository.ipFlow.value)
     }
 
     fun isAuthorised() {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.isAuthFinished.collectLatest {
-                mIsUserAuth.postValue(it)
+                mIsTransitToUserList.postValue(it)
             }
         }
     }
 
     fun getIp() {
-        authRepository.myDefaultScope.launch {
+        authRepository.myWorkScope.launch {
             authRepository.getIp()
         }
     }
 
-    fun isIpExist() {
-        authRepository.myDefaultScope.launch {
-            authRepository.ipFlow.collectLatest {
-                if (it.isNotEmpty())
-                    isIpExists.postValue(true)
-            }
-        }
-    }
-
-    fun isSocketExist() {
-        authRepository.myDefaultScope.launch(Dispatchers.IO) {
-            authRepository.tcpSocket.isSocketExist.collectLatest {
-                mIsSocketExist.postValue(it)
+    fun isConnectionExists() {
+        authRepository.myWorkScope.launch(Dispatchers.IO) {
+            authRepository.isSocketExist.collectLatest {
+                mIsConnectionExists.postValue(it)
             }
         }
     }

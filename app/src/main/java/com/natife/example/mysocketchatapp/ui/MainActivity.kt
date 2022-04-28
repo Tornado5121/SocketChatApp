@@ -14,12 +14,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        authViewModel.isSocketExist.observe(this) {
+        authViewModel.getIp()
+        authViewModel.isConnectionExists.observe(this) {
             if (!it) {
                 transitToAuth()
             }
         }
-        authViewModel.isSocketExist()
+        authViewModel.isConnectionExists()
     }
 
     private fun transitToAuth() {

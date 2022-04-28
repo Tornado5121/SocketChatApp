@@ -15,4 +15,5 @@ class MyApp : Application() {
             modules(listOf(dataModule, viewModelModule))
         }
     }
+
 }

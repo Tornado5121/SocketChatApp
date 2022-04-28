@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
 import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
+import com.natife.example.mysocketchatapp.data.socket.models.User
 import com.natife.example.mysocketchatapp.databinding.MyChatMessageItemBinding
 import com.natife.example.mysocketchatapp.databinding.NotmyChatMessageItemBinding
 
@@ -14,7 +14,8 @@ private const val VIEW_TYPE_ONE = 1
 private const val VIEW_TYPE_TWO = 2
 
 class ChatMessagesAdapter(
-    private val tcpSocket: TcpSocket
+    private val user: User,
+    private val onViewHolderDisplay: (User) -> String
 ) : ListAdapter<
         MessageDto,
         RecyclerView.ViewHolder>
@@ -29,13 +30,17 @@ class ChatMessagesAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (currentList[position].from.id == tcpSocket.id) {
-            (holder as MyChatMessageViewHolder).bind(currentList[position])
-        } else (holder as NotMyChatMessageViewHolder).bind(currentList[position])
+        if (onViewHolderDisplay(user) != currentList[position].from.id) {
+            (holder as MyChatMessageViewHolder).bind(
+                currentList[position]
+            )
+        } else (holder as NotMyChatMessageViewHolder).bind(
+            currentList[position]
+        )
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (currentList[position].from.id == tcpSocket.id) {
+        return if (onViewHolderDisplay(user) != currentList[position].from.id) {
             VIEW_TYPE_ONE
         } else {
             VIEW_TYPE_TWO

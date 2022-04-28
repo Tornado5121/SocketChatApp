@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.natife.example.mysocketchatapp.R
 import com.natife.example.mysocketchatapp.databinding.FragmentUserListBinding
+import com.natife.example.mysocketchatapp.ui.authScreen.AuthFragment
 import com.natife.example.mysocketchatapp.ui.chatScreen.ChatFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -17,13 +17,15 @@ class UserListFragment : Fragment() {
     private lateinit var binding: FragmentUserListBinding
     private val userListViewModel by viewModel<UserListViewModel>()
 
-    private val userListAdapter = UserListAdapter {
-        requireActivity()
-            .supportFragmentManager
-            .beginTransaction()
-            .addToBackStack("")
-            .replace(R.id.fragment_container, ChatFragment.getChatFragmentInstance(it.id))
-            .commit()
+    private val userListAdapter by lazy {
+        UserListAdapter {
+            requireActivity()
+                .supportFragmentManager
+                .beginTransaction()
+                .addToBackStack("")
+                .replace(R.id.fragment_container, ChatFragment.getChatFragmentInstance(it.id))
+                .commit()
+        }
     }
 
     override fun onCreateView(
@@ -38,16 +40,21 @@ class UserListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            progressBar2.isVisible = true
             recyclerView.adapter = userListAdapter
             recyclerView.layoutManager = LinearLayoutManager(activity)
         }
-        userListViewModel.liveData.observe(viewLifecycleOwner) {
+        userListViewModel.userListLiveData.observe(viewLifecycleOwner) {
             userListAdapter.submitList(it)
         }
-        userListViewModel.getUserList()
-        binding.progressBar2.isVisible = false
-        userListViewModel.sendGetUserCommand()
+        userListViewModel.getUsers()
+
+        binding.button2.setOnClickListener {
+            userListViewModel.logOut()
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, AuthFragment())
+                .commit()
+        }
     }
 
 }
