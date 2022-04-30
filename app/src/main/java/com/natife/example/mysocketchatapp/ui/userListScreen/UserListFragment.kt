@@ -46,12 +46,12 @@ class UserListFragment : Fragment() {
         userListViewModel.userListLiveData.observe(viewLifecycleOwner) {
             userListAdapter.submitList(it)
         }
-        userListViewModel.getUsers()
 
         binding.button2.setOnClickListener {
             userListViewModel.logOut()
             requireActivity().supportFragmentManager
                 .beginTransaction()
+                .addToBackStack("")
                 .replace(R.id.fragment_container, AuthFragment())
                 .commit()
         }

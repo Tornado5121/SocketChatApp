@@ -2,12 +2,8 @@ package com.natife.example.mysocketchatapp.data.socket.helpers
 
 import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -22,21 +18,20 @@ class TcpSocketImpl : TcpSocket {
     private var reader: BufferedReader? = null
     private var writer: PrintWriter? = null
 
-    private val myJob = Job()
-    private val myScope = CoroutineScope(myJob + Dispatchers.IO)
-
     override var mUserListFlow = MutableStateFlow(listOf<User>())
     override var userListFlow: StateFlow<List<User>> = mUserListFlow
 
     override var mMessageFlow = MutableStateFlow(MessageDto(User("", ""), ""))
     override var messageFlow: StateFlow<MessageDto> = mMessageFlow
 
-    override fun connectSocket(ip: String) {
-        myScope.launch {
-            socket = Socket(ip, tcpPort)
-            reader = BufferedReader(InputStreamReader(socket?.getInputStream()))
-            writer = PrintWriter(OutputStreamWriter(socket?.getOutputStream()))
-        }
+    override suspend fun connectSocket(ip: String) {
+        socket = Socket(ip, tcpPort)
+        reader = BufferedReader(InputStreamReader(socket?.getInputStream()))
+        writer = PrintWriter(OutputStreamWriter(socket?.getOutputStream()))
+    }
+
+    override fun isSocketConnected(): Boolean? {
+        return socket?.isConnected
     }
 
     override fun send(command: String) {

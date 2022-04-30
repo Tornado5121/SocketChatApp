@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface TcpSocket {
 
-    var mUserListFlow: MutableStateFlow<List<User>>
-    var mMessageFlow: MutableStateFlow<MessageDto>
-    var userListFlow: StateFlow<List<User>>
-    var messageFlow: StateFlow<MessageDto>
+    val mUserListFlow: MutableStateFlow<List<User>>
+    val mMessageFlow: MutableStateFlow<MessageDto>
+    val userListFlow: StateFlow<List<User>>
+    val messageFlow: StateFlow<MessageDto>
 
-    fun connectSocket(ip: String)
+    fun isSocketConnected(): Boolean?
+    suspend fun connectSocket(ip: String)
     fun send(command: String)
     fun read(): String?
     fun closeSocketConnection()

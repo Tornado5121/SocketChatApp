@@ -8,6 +8,7 @@ import com.natife.example.mysocketchatapp.data.repositories.userProfileRepo.User
 import com.natife.example.mysocketchatapp.data.repositories.userRepo.UserRepository
 import com.natife.example.mysocketchatapp.data.socket.models.User
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,36 +23,35 @@ class UserListViewModel(
 
     private val mUserListLiveData = MutableLiveData<List<User>>()
     val userListLiveData = mUserListLiveData
+    private var sendGetUsersCommandJob: Job
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            while (true) {
-                userRepository.sendGetUserListCommand(authRepository.id)
-                delay(sendGetUserCommandDelay)
-            }
-        }
-
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.userListFlow.collectLatest {
                 mUserListLiveData.postValue(it)
             }
         }
+
+        sendGetUsersCommandJob = viewModelScope.launch(Dispatchers.IO) {
+            while (true) {
+                userRepository.sendGetUserListCommand(authRepository.getMyId())
+                delay(sendGetUserCommandDelay)
+            }
+        }
+
     }
 
     fun logOut() {
         viewModelScope.launch {
             userProfileRepository.clearName()
             authRepository.closeSocket()
-        }
-    }
-
-    fun getUsers() {
-        viewModelScope.launch {
-            userRepository.getUser()
+            sendGetUsersCommandJob.cancel()
+            sendGetUsersCommandJob.join()
         }
     }
 
 }
+
 
 
 

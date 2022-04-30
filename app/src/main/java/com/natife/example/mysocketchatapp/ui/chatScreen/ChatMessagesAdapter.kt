@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.User
 import com.natife.example.mysocketchatapp.databinding.MyChatMessageItemBinding
 import com.natife.example.mysocketchatapp.databinding.NotmyChatMessageItemBinding
 
@@ -14,8 +13,7 @@ private const val VIEW_TYPE_ONE = 1
 private const val VIEW_TYPE_TWO = 2
 
 class ChatMessagesAdapter(
-    private val user: User,
-    private val onViewHolderDisplay: (User) -> String
+    private val isMyMessage: (String) -> Boolean
 ) : ListAdapter<
         MessageDto,
         RecyclerView.ViewHolder>
@@ -30,7 +28,7 @@ class ChatMessagesAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (onViewHolderDisplay(user) != currentList[position].from.id) {
+        if (isMyMessage(currentList[position].from.id)) {
             (holder as MyChatMessageViewHolder).bind(
                 currentList[position]
             )
@@ -40,7 +38,7 @@ class ChatMessagesAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (onViewHolderDisplay(user) != currentList[position].from.id) {
+        return if (isMyMessage(currentList[position].from.id)) {
             VIEW_TYPE_ONE
         } else {
             VIEW_TYPE_TWO

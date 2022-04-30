@@ -1,5 +1,6 @@
-package com.natife.example.mysocketchatapp.ui.authScreen
+package com.natife.example.mysocketchatapp.ui
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,30 +10,32 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class AuthViewModel(
+class MainViewModel(
     private val authRepository: AuthRepository,
     private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
 
-    private val mIsTransitToUserList = MutableLiveData<Boolean>()
-    val isTransitToUserList = mIsTransitToUserList
+    private val mIsConnectionExists = MutableLiveData<Boolean>()
+    val isConnectionExists: LiveData<Boolean> = mIsConnectionExists
+
+    private var isFirstLaunch = true
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             authRepository.isSocketExist.collectLatest {
-                mIsTransitToUserList.postValue(it)
+                mIsConnectionExists.postValue(it)
+                if (!it) {
+                    if (!isFirstLaunch) {
+                        clearNameFromPrefsAfterLostConnection()
+                        isFirstLaunch = false
+                    }
+                }
             }
         }
-
     }
 
-    fun getName(): String {
-        return userProfileRepository.getName()
-    }
-
-    fun loginUser(name: String) {
-        userProfileRepository.saveName(name)
-        authRepository.readSocketCommand(name)
+    private fun clearNameFromPrefsAfterLostConnection() {
+        userProfileRepository.clearName()
     }
 
 }

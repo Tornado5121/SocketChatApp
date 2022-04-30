@@ -9,51 +9,55 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.net.SocketException
 
-const val SHARED_PREF_NAME = "resources"
-const val USER_NAME_KEY = "myName"
-
 class AuthRepositoryImpl(
     private val tcpSocket: TcpSocket,
     private val udpSocket: UdpSocket
 ) : AuthRepository {
 
-    override var id = ""
+    private var id = ""
 
     private val mIsSocketExist = MutableStateFlow(false)
     override val isSocketExist: StateFlow<Boolean> = mIsSocketExist
 
-    private var mIsAuthFinished = MutableStateFlow(false)
-    override val isAuthFinished: StateFlow<Boolean> = mIsAuthFinished
-
     private val myWorkJob by lazy { Job() }
     override val myWorkScope by lazy { CoroutineScope(myWorkJob + Dispatchers.IO) }
-    private lateinit var readSocketJobFromBuilder: Job
-
-    private val myCancelJob by lazy { Job() }
-    private val myCancelScope by lazy { CoroutineScope(myCancelJob + Dispatchers.IO) }
-    private lateinit var cancelJobForNotGettingPong: Job
+    private lateinit var readSocketCommandJob: Job
+    private lateinit var cancelJobIfNotGettingPong: Job
+    private lateinit var sendPingCommandJob: Job
 
     private val mIpFlow = MutableStateFlow("")
     override val ipFlow: MutableStateFlow<String> = mIpFlow
 
     private val gson by lazy { Gson() }
 
-    override fun getIp() {
-        myWorkScope.launch {
-            mIpFlow.emit(udpSocket.ipAddress())
-        }
+    override fun getMyId(): String {
+        return id
     }
 
-    override fun launchPingPongMechanism() {
-        myWorkScope.launch {
-            while (true) {
-                delay(3000)
+    private fun launchPingPongMechanism(isSocketConnected: Boolean) {
+        sendPingCommandJob = myWorkScope.launch {
+            while (isSocketConnected) {
+                delay(10000)
                 val pingDto = PingDto(id)
                 val pingDtoPayload = gson.toJson(pingDto)
                 val baseDtoForPing = gson.toJson(BaseDto(BaseDto.Action.PING, pingDtoPayload))
                 tcpSocket.send(baseDtoForPing)
+
+                cancelJobIfNotGettingPong = myWorkScope.launch {
+                    delay(15000)
+                    try {
+                        closeSocket()
+                    } catch (e: SocketException) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
+    }
+
+    private suspend fun connectSocketAndHelperObjects() {
+        val ip = udpSocket.getIpAddress()
+        tcpSocket.connectSocket(ip)
     }
 
     override fun sendConnectCommand(userId: String, name: String) {
@@ -64,32 +68,19 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun closeSocket() {
-        mIsSocketExist.emit(false)
-        mIsAuthFinished.emit(false)
+        mIsSocketExist.value = false
         tcpSocket.closeSocketConnection()
-        readSocketJobFromBuilder.cancel()
-        readSocketJobFromBuilder.join()
-    }
-
-    override fun disconnectSocket() {
-        cancelJobForNotGettingPong = myCancelScope.launch {
-            while (true) {
-                delay(4000)
-                try {
-                    closeSocket()
-                } catch (e: SocketException) {
-                    e.printStackTrace()
-                }
-            }
-        }
+        readSocketCommandJob.cancel()
+        readSocketCommandJob.join()
+        sendPingCommandJob.cancel()
+        sendPingCommandJob.join()
     }
 
     override fun readSocketCommand(
-        name: String,
-        ip: String
+        name: String
     ) {
-        readSocketJobFromBuilder = myWorkScope.launch {
-            tcpSocket.connectSocket(ip)
+        readSocketCommandJob = myWorkScope.launch {
+            connectSocketAndHelperObjects()
             mIsSocketExist.emit(true)
             while (true) {
                 try {
@@ -107,13 +98,13 @@ class AuthRepositoryImpl(
 
                                 id = userId
                                 sendConnectCommand(userId, name)
-                                launchPingPongMechanism()
-                                disconnectSocket()
-                                mIsAuthFinished.emit(true)
+                                tcpSocket.isSocketConnected()?.let { launchPingPongMechanism(it) }
+                                mIsSocketExist.emit(true)
                             }
 
                             BaseDto.Action.PONG -> {
-                                cancelJobForNotGettingPong.cancel()
+                                cancelJobIfNotGettingPong.cancel()
+                                cancelJobIfNotGettingPong.join()
                             }
 
                             BaseDto.Action.USERS_RECEIVED -> {
@@ -122,7 +113,7 @@ class AuthRepositoryImpl(
                                         parsedResponse.payload,
                                         UsersReceivedDto::class.java
                                     )
-                                tcpSocket.mUserListFlow.value = existUserList.users
+                                tcpSocket.mUserListFlow.emit(existUserList.users)
                             }
 
                             BaseDto.Action.NEW_MESSAGE -> {

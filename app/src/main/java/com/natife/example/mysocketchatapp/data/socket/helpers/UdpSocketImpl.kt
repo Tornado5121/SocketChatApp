@@ -15,7 +15,7 @@ class UdpSocketImpl : UdpSocket{
     private val byteArray = ByteArray(5000)
     private val message = "getUdpConnection".toByteArray()
 
-    override fun ipAddress(): String {
+    override suspend fun getIpAddress(): String {
         var ip = ""
         while (ip.isEmpty()) {
             val datagramSocket = DatagramSocket()

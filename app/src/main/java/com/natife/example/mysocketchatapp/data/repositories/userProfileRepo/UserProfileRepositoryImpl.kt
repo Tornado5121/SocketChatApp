@@ -1,27 +1,27 @@
 package com.natife.example.mysocketchatapp.data.repositories.userProfileRepo
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.natife.example.mysocketchatapp.data.repositories.authRepo.SHARED_PREF_NAME
-import com.natife.example.mysocketchatapp.data.repositories.authRepo.USER_NAME_KEY
+
+const val USER_NAME_KEY = "myName"
 
 class UserProfileRepositoryImpl(
-    private val context: Context
+    private val sharedPrefs: SharedPreferences
 ) : UserProfileRepository {
 
     override fun saveName(name: String) {
-        context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE).edit {
+        sharedPrefs.edit {
             putString(USER_NAME_KEY, name)
         }
     }
 
     override fun getName(): String {
-        return context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPrefs
             .getString(USER_NAME_KEY, "SomeName").toString()
     }
 
     override fun clearName() {
-        context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE).edit().clear().apply()
+        sharedPrefs.edit().clear().apply()
     }
 
 }

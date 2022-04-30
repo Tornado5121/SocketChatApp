@@ -11,6 +11,8 @@ import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.User
 import com.natife.example.mysocketchatapp.data.socket.models.toMessageDto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -18,7 +20,7 @@ class ChatViewModel(
     private val chatRepository: ChatRepository,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val userSpeakToId: String
+    private val userSpeakToId: String,
 ) : ViewModel() {
 
     private val mMessagesLiveData = MutableLiveData<List<MessageDto>>()
@@ -35,14 +37,14 @@ class ChatViewModel(
                 mMessagesLiveData.postValue(messages)
             }
         }
+    }
 
-        viewModelScope.launch {
-            chatRepository.getNewMessage()
-        }
+    fun isMyMessage(idMessageUser: String): Boolean {
+        return idMessageUser == getMyId()
     }
 
     fun getMyId(): String {
-        return authRepository.id
+        return authRepository.getMyId()
     }
 
     fun sendMessage(myMessage: SendMessageDto) {
@@ -54,16 +56,16 @@ class ChatViewModel(
             chatRepository.sendMessage(
                 myMessage.receiver,
                 myMessage.message,
-                authRepository.id
+                authRepository.getMyId()
             )
         }
     }
 
-    fun getUser(id: String?): User {
+    fun getUser(id: String?): User? {
         val userList = userRepository.userListFlow.value
-        val user = userList.filter {
+        val user = userList.find {
             it.id == id
-        }[0]
+        }
         return user
     }
 

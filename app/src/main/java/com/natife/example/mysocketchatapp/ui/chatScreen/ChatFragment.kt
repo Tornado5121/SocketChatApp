@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
 import com.natife.example.mysocketchatapp.data.socket.models.User
 import com.natife.example.mysocketchatapp.databinding.FragmentChatBinding
@@ -24,11 +25,13 @@ class ChatFragment : Fragment() {
             )
         )
     }
-    private lateinit var userId: String
-    private val user: User by lazy { User(userId, "") }
+    private val userId: String by lazy {
+        chatViewModel.getUser(arguments?.getString(KEY_ID))?.id ?: ""
+    }
+
     private val chatMessageAdapter by lazy {
-        ChatMessagesAdapter(user) {
-            it.id
+        ChatMessagesAdapter {
+            chatViewModel.isMyMessage(it)
         }
     }
 
@@ -38,7 +41,6 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
-        userId = arguments?.let { chatViewModel.getUser(it.getString(KEY_ID)) }?.id ?: ""
         return binding.root
     }
 
@@ -61,7 +63,7 @@ class ChatFragment : Fragment() {
                 chatViewModel.sendMessage(
                     SendMessageDto(
                         chatViewModel.getMyId(),
-                        user.id,
+                        userId,
                         message
                     )
                 )

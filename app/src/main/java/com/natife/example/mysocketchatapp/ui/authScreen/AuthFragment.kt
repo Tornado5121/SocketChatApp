@@ -16,7 +16,7 @@ class AuthFragment : Fragment() {
     private lateinit var binding: FragmentAuthBinding
     private val authViewModel by viewModel<AuthViewModel>()
 
-    val name by lazy { authViewModel.getName() }
+    private val name by lazy { authViewModel.getName() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,22 +34,19 @@ class AuthFragment : Fragment() {
             if (it) {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .addToBackStack("")
                     .replace(R.id.fragment_container, UserListFragment())
                     .commit()
             }
         }
-        authViewModel.isAuthorised()
 
         binding.button.setOnClickListener {
             binding.progressBar.isVisible = true
             authViewModel.loginUser(binding.editTextTextPersonName.text.toString())
         }
 
-        if (name.isNotEmpty()  && name != "SomeName") {
+        if (name.isNotEmpty() && name != "SomeName") {
             requireActivity().supportFragmentManager
                 .beginTransaction()
-                .addToBackStack("")
                 .replace(R.id.fragment_container, UserListFragment())
                 .commit()
 

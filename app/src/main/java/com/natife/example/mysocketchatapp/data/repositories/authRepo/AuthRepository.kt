@@ -6,17 +6,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface AuthRepository {
 
-    var id: String
     val isSocketExist: StateFlow<Boolean>
-    val isAuthFinished: StateFlow<Boolean>
     val ipFlow: MutableStateFlow<String>
     val myWorkScope: CoroutineScope
 
-    fun getIp()
-    fun launchPingPongMechanism()
+    fun getMyId(): String
     fun sendConnectCommand(userId: String, name: String)
     suspend fun closeSocket()
-    fun disconnectSocket()
-    fun readSocketCommand(name: String, ip: String)
+    fun readSocketCommand(name: String)
 
 }
