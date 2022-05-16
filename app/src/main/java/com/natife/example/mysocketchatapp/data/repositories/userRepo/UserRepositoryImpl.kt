@@ -1,16 +1,11 @@
 package com.natife.example.mysocketchatapp.data.repositories.userRepo
 
 import com.google.gson.Gson
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
-import com.natife.example.mysocketchatapp.data.socket.models.BaseDto
-import com.natife.example.mysocketchatapp.data.socket.models.GetUsersDto
-import com.natife.example.mysocketchatapp.data.socket.models.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.example.domain.helpers.TcpSocket
+import com.example.domain.models.BaseDto
+import com.example.domain.models.GetUsersDto
+import com.example.domain.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class UserRepositoryImpl(
     private val tcpSocket: TcpSocket,

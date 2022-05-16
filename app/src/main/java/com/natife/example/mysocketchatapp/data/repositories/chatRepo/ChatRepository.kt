@@ -1,6 +1,6 @@
 package com.natife.example.mysocketchatapp.data.repositories.chatRepo
 
-import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
+import com.example.domain.models.MessageDto
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface ChatRepository {

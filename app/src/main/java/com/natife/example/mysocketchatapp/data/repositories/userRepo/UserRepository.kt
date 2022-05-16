@@ -1,6 +1,6 @@
 package com.natife.example.mysocketchatapp.data.repositories.userRepo
 
-import com.natife.example.mysocketchatapp.data.socket.models.User
+import com.example.domain.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface UserRepository {

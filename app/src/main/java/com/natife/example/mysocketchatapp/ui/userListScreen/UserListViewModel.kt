@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.natife.example.mysocketchatapp.data.repositories.authRepo.AuthRepository
 import com.natife.example.mysocketchatapp.data.repositories.userProfileRepo.UserProfileRepository
 import com.natife.example.mysocketchatapp.data.repositories.userRepo.UserRepository
-import com.natife.example.mysocketchatapp.data.socket.models.User
+import com.example.domain.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

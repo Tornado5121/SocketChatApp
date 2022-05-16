@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.User
+import com.example.domain.models.SendMessageDto
 import com.natife.example.mysocketchatapp.databinding.FragmentChatBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf

@@ -1,10 +1,10 @@
 package com.natife.example.mysocketchatapp.data.repositories.chatRepo
 
 import com.google.gson.Gson
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
-import com.natife.example.mysocketchatapp.data.socket.models.BaseDto
-import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
+import com.example.domain.helpers.TcpSocket
+import com.example.domain.models.BaseDto
+import com.example.domain.models.MessageDto
+import com.example.domain.models.SendMessageDto
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class ChatRepositoryImpl(

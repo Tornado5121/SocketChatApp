@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.natife.example.mysocketchatapp.data.socket.models.User
+import com.example.domain.models.User
 import com.natife.example.mysocketchatapp.databinding.UserItemBinding
 
 class UserListAdapter(

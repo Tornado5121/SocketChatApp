@@ -1,9 +1,9 @@
 package com.natife.example.mysocketchatapp.data.repositories.authRepo
 
 import com.google.gson.Gson
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
-import com.natife.example.mysocketchatapp.data.socket.helpers.UdpSocket
-import com.natife.example.mysocketchatapp.data.socket.models.*
+import com.example.domain.helpers.TcpSocket
+import com.example.domain.helpers.UdpSocket
+import com.example.domain.models.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

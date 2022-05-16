@@ -9,10 +9,10 @@ import com.natife.example.mysocketchatapp.data.repositories.userProfileRepo.User
 import com.natife.example.mysocketchatapp.data.repositories.userProfileRepo.UserProfileRepositoryImpl
 import com.natife.example.mysocketchatapp.data.repositories.userRepo.UserRepository
 import com.natife.example.mysocketchatapp.data.repositories.userRepo.UserRepositoryImpl
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocket
-import com.natife.example.mysocketchatapp.data.socket.helpers.TcpSocketImpl
-import com.natife.example.mysocketchatapp.data.socket.helpers.UdpSocket
-import com.natife.example.mysocketchatapp.data.socket.helpers.UdpSocketImpl
+import com.example.domain.helpers.TcpSocket
+import com.example.domain.helpers.TcpSocketImpl
+import com.example.domain.helpers.UdpSocket
+import com.example.domain.helpers.UdpSocketImpl
 import com.natife.example.mysocketchatapp.ui.MainViewModel
 import com.natife.example.mysocketchatapp.ui.authScreen.AuthViewModel
 import com.natife.example.mysocketchatapp.ui.chatScreen.ChatViewModel

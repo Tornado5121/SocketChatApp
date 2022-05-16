@@ -6,13 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.natife.example.mysocketchatapp.data.repositories.authRepo.AuthRepository
 import com.natife.example.mysocketchatapp.data.repositories.chatRepo.ChatRepository
 import com.natife.example.mysocketchatapp.data.repositories.userRepo.UserRepository
-import com.natife.example.mysocketchatapp.data.socket.models.MessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.SendMessageDto
-import com.natife.example.mysocketchatapp.data.socket.models.User
-import com.natife.example.mysocketchatapp.data.socket.models.toMessageDto
+import com.example.domain.models.MessageDto
+import com.example.domain.models.SendMessageDto
+import com.example.domain.models.User
+import com.example.domain.models.toMessageDto
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

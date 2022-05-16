@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MySocketChatApp"
 include ':app'
+include ':domain'
